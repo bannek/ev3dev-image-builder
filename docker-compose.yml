@@ -1,0 +1,9 @@
+version: '3.8'  # Specify the version of Docker Compose
+
+services:
+  roboliga2024_builder:
+    build:
+      context: image_builder
+      dockerfile: Dockerfile  # Specify the Dockerfile (optional if named Dockerfile)
+    image: roboliga2024:latest  # Tag the built image
+    container_name: roboliga2024_builder  # Name the container
