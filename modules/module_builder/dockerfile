@@ -4,17 +4,28 @@ SHELL ["/bin/bash", "-c"]
 
 RUN mkdir /roboliga_build
 RUN mkdir /staging
+
+COPY ./requirements.txt /roboliga_build/requirements.txt
+COPY ./packages.txt /roboliga_build/packages.txt
+COPY ./prerequisites /roboliga_build/prerequisites
+
+RUN chmod 777 /roboliga_build
 RUN chmod 777 /staging
 RUN apt update
 RUN apt upgrade -y
-RUN apt install libcurl4-openssl-dev
+RUN xargs -a /roboliga_build/packages.txt apt install -y
 
 WORKDIR /home/robot/
 
-COPY ./requirements.txt /roboliga_build/requirements.txt
+RUN rm -rf ./*
+RUN rm -rf ./.cache
 
-RUN source /home/robot/venv311/bin/activate
-RUN pip3.11 install -r /roboliga_build/requirements.txt
+USER robot
+
+RUN python3.11 -m venv roboliga_build
+RUN source /home/robot/roboliga_build/bin/activate
+RUN /home/robot/roboliga_build/bin/pip3.11 install /roboliga_build/prerequisites/*.whl
+RUN /home/robot/roboliga_build/bin/pip3.11 install -r /roboliga_build/requirements.txt
 RUN cp /home/robot/.cache/pip/wheels/*/*/*/*/*.whl /staging
 
 CMD ["/bin/bash", "-c", "cp /staging/*.whl /wheels"]

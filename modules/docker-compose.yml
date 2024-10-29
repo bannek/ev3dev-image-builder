@@ -9,5 +9,4 @@ services:
     container_name: roboliga2024_module_builder
     volumes:
       - ../precompiled_modules:/wheels:rw
-    # command: ["/bin/bash", "-c", "cp -r /wheels_build /wheels"]
     
