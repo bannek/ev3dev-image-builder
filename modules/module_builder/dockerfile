@@ -1,0 +1,20 @@
+FROM --platform=linux/arm/v5 growflavor/ev3images:ev3dev10imgv02b
+
+SHELL ["/bin/bash", "-c"]
+
+RUN mkdir /roboliga_build
+RUN mkdir /staging
+RUN chmod 777 /staging
+RUN apt update
+RUN apt upgrade -y
+RUN apt install libcurl4-openssl-dev
+
+WORKDIR /home/robot/
+
+COPY ./requirements.txt /roboliga_build/requirements.txt
+
+RUN source /home/robot/venv311/bin/activate
+RUN pip3.11 install -r /roboliga_build/requirements.txt
+RUN cp /home/robot/.cache/pip/wheels/*/*/*/*/*.whl /staging
+
+CMD ["/bin/bash", "-c", "cp /staging/*.whl /wheels"]
